@@ -83,6 +83,8 @@ etnRGB20 <- crop(etnaRGB20,ext2)
 writeRaster(etnRGB20,"etnRGB20.tif")
 plotRGB(etnRGB20, stretch="Lin")
 
+plotRGB(etnRGB20, 3,2,1, stretch="Lin") #per plot RGB  con montaggio delle bande verde rosso e IR
+
 
 
 ## california fires
