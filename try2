@@ -70,7 +70,7 @@ zoom(etn,ext=ext2)
 etn1 <- crop(etn,ext2)
 writeRaster(etn2,"etn2.tif")
 
-## plotRGB
+## plotRGB, 3,2,1 10m
 require(raster)
 require(RStoolbox)
 etna20v <- raster("C:/Users/utente/Documents/T33SVB_20200222T095021_B03_10m.jp2")
@@ -154,3 +154,145 @@ ggR(lsat_umx, 1:4, geom_raster = TRUE) +
 
 ## califire 03/2020
 ## uguale
+
+
+## AUSTRALIA
+## pre fire: 21/11/19 
+a2 <- raster("C:/Users/utente/Documents/T55HGU_20191121T000241_B02_20m.jp2")
+a3 <- raster("C:/Users/utente/Documents/T55HGU_20191121T000241_B03_20m.jp2")
+a4 <- raster("C:/Users/utente/Documents/T55HGU_20191121T000241_B04_20m.jp2")
+a5 <- raster("C:/Users/utente/Documents/T55HGU_20191121T000241_B05_20m.jp2")
+a6 <- raster("C:/Users/utente/Documents/T55HGU_20191121T000241_B06_20m.jp2")
+a7 <- raster("C:/Users/utente/Documents/T55HGU_20191121T000241_B07_20m.jp2")
+a8 <- raster("C:/Users/utente/Documents/T55HGU_20191121T000241_B8A_20m.jp2")
+ausfire19 <- stack(a2,a3,a4,a5,a6,a7,a8)
+ausfire19
+MapTheme <- list(theme(
+  axis.text = element_text(size = 6),  
+  axis.text.y = element_text(angle = 90, hjust = 0.5),
+  axis.title = element_blank()
+))  
+ggRGB(ausfire19, stretch = "lin")
+
+## serve fare un crop 
+ext1 <- c(735000,760000,5845000,5860000)
+zoom(ausfire19, ext=ext1)
+
+ausfir19 <- crop(ausfire19, ext1)
+writeRaster(ausfir19,"ausfir19.tif")
+
+ext2 <- c(740000,760000,5847000,5860000) ## scelto
+zoom(ausfire19, ext=ext2)
+
+austfir19 <- crop(ausfire19, ext2)
+writeRaster(austfir19,"austfir19.tif")
+ggRGB(ausfir19, stretch = "lin")
+set.seed(42)
+
+## default behavior
+lsat_uc <- unsuperClass(austfir19, nClasses = 4, output = "classes")
+lsat_uc
+ggR(lsat_uc$map, forceCat = TRUE, geom_raster = TRUE) +
+  scale_fill_viridis_d(name = "Cluster", option = "A") + MapTheme
+
+## Distances
+set.seed(42)
+lsat_ucd <- unsuperClass(austfir19, nClasses = 4, output = "distances")
+
+lsat_ucd
+ggR(lsat_ucd$map, layer = 1:4, geom_raster = TRUE) +
+  scale_fill_viridis_c(name = "Distance", direction = -1) + MapTheme
+
+## Spectral angle mapper
+classCentroids <- lsat_ucd$model$centers
+
+lsat_sa <- sam(austfir19, em = classCentroids, angles = TRUE)
+lsat_sa
+ggR(lsat_sa, 1:4, geom_raster = TRUE) +
+  scale_fill_viridis_c(name = "Spectral angle", direction = -1) + MapTheme
+
+## Spectral unmixing
+lsat_umx <- mesma(austfir19, em = classCentroids)
+lsat_umx
+ggR(lsat_umx, 1:4, geom_raster = TRUE) +
+  scale_fill_viridis_c(name = "Probability") + MapTheme
+  
+  
+  ## plot RGB 3,2,1
+  # con 10m 
+au3 <- raster("C:/Users/utente/Documents/T55HGU_20191121T000241_B03_10m.jp2")
+au4 <- raster("C:/Users/utente/Documents/T55HGU_20191121T000241_B04_10m.jp2")
+au8 <- raster("C:/Users/utente/Documents/T55HGU_20191121T000241_B08_10m.jp2")
+au19 <- stack(au3,au4,au8)
+ zoom(au19, ext=ext2)
+
+auRGB19 <- crop(au19, ext2)
+writeRaster(auRGB19,"auRGB19.tif") 
+  plotRGB(auRGB19, 3,2,1, stretch="Lin")
+  
+## 20/03/2020, post
+as2 <- raster("C:/Users/utente/Documents/T55HGU_20200320T000241_B02_20m.jp2")
+as3 <- raster("C:/Users/utente/Documents/T55HGU_20200320T000241_B03_20m.jp2")
+as4 <- raster("C:/Users/utente/Documents/T55HGU_20200320T000241_B04_20m.jp2")
+as5 <- raster("C:/Users/utente/Documents/T55HGU_20200320T000241_B05_20m.jp2")
+as6 <- raster("C:/Users/utente/Documents/T55HGU_20200320T000241_B06_20m.jp2")
+as7 <- raster("C:/Users/utente/Documents/T55HGU_20200320T000241_B07_20m.jp2")
+as8 <- raster("C:/Users/utente/Documents/T55HGU_20200320T000241_B8A_20m.jp2")
+ausfire20 <- stack(as2,as3,as4,as5,as6,as7,as8)
+ausfire20
+MapTheme <- list(theme(
+  axis.text = element_text(size = 6),  
+  axis.text.y = element_text(angle = 90, hjust = 0.5),
+  axis.title = element_blank()
+))  
+ggRGB(ausfire20, stretch = "lin")
+
+## crop 
+ext2 <- c(740000,760000,5847000,5860000) ## scelto
+zoom(ausfire20, ext=ext2)
+
+austfir20 <- crop(ausfire20, ext2)
+writeRaster(austfir20,"austfir20.tif")
+ggRGB(austfir20, stretch = "lin")
+set.seed(42)
+
+## default behavior
+lsat_uc <- unsuperClass(austfir20, nClasses = 4, output = "classes")
+lsat_uc
+ggR(lsat_uc$map, forceCat = TRUE, geom_raster = TRUE) +
+  scale_fill_viridis_d(name = "Cluster", option = "A") + MapTheme
+
+## Distances
+set.seed(42)
+lsat_ucd <- unsuperClass(austfir20, nClasses = 4, output = "distances")
+
+lsat_ucd
+ggR(lsat_ucd$map, layer = 1:4, geom_raster = TRUE) +
+  scale_fill_viridis_c(name = "Distance", direction = -1) + MapTheme
+
+## Spectral angle mapper
+classCentroids <- lsat_ucd$model$centers
+
+lsat_sa <- sam(austfir20, em = classCentroids, angles = TRUE)
+lsat_sa
+ggR(lsat_sa, 1:4, geom_raster = TRUE) +
+  scale_fill_viridis_c(name = "Spectral angle", direction = -1) + MapTheme
+
+## Spectral unmixing
+lsat_umx <- mesma(austfir20, em = classCentroids)
+lsat_umx
+ggR(lsat_umx, 1:4, geom_raster = TRUE) +
+  scale_fill_viridis_c(name = "Probability") + MapTheme
+  
+  
+  ## plot RGB 3,2,1
+  # con 10m 
+aus3 <- raster("C:/Users/utente/Documents/T55HGU_20191121T000241_B03_10m.jp2")
+aus4 <- raster("C:/Users/utente/Documents/T55HGU_20191121T000241_B04_10m.jp2")
+aus8 <- raster("C:/Users/utente/Documents/T55HGU_20191121T000241_B08_10m.jp2")
+au20 <- stack(aus3,aus4,aus8)
+ zoom(au20, ext=ext2)
+
+auRGB20 <- crop(au20, ext2)
+writeRaster(auRGB20,"auRGB20.tif") 
+  plotRGB(auRGB20, 3,2,1, stretch="Lin")
