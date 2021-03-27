@@ -296,3 +296,34 @@ au20 <- stack(aus3,aus4,aus8)
 auRGB20 <- crop(au20, ext2)
 writeRaster(auRGB20,"auRGB20.tif") 
   plotRGB(auRGB20, 3,2,1, stretch="Lin")
+
+## ggRGB true color
+require(RStoolbox)
+## etna 
+ext2 <- c(470000,510000,4140000,4200000)
+et21r <- crop(raster("C:/Users/utente/Documents/T33SVB_20210226T095031_B04_10m.jp2"), ext2)
+et21b <- crop(raster("C:/Users/utente/Documents/T33SVB_20210226T095031_B02_10m.jp2"), ext2)
+et21v <- crop(raster("C:/Users/utente/Documents/T33SVB_20210226T095031_B03_10m.jp2"), ext2)
+try <- stack(et21r, et21b, et21v)
+ggRGB(try, r=1,g=3,b=2)
+
+et20r <- crop(raster("C:/Users/utente/Documents/T33SVB_20200222T095021_B04_10m.jp2"), ext2)
+et20b <- crop(raster("C:/Users/utente/Documents/T33SVB_20200222T095021_B02_10m.jp2"), ext2)
+et20v <- crop(raster("C:/Users/utente/Documents/T33SVB_20200222T095021_B03_10m.jp2"), ext2)
+tr <- stack(et20r,et20b,et20v)
+ggRGB(tr, r=1,g=3,b=2)
+ggRGB(try, r=1,g=2,b=3)
+
+## california
+ext3 <- c(660000,674000,4247000,4257000)
+ca10r <- crop(raster("C:/Users/utente/Documents/T10SFH_20201026T185459_B04_10m.jp2"), ext3)
+ca10b <- crop(raster("C:/Users/utente/Documents/T10SFH_20201026T185459_B02_10m.jp2"), ext3)
+ca10v <- crop(raster("C:/Users/utente/Documents/T10SFH_20201026T185459_B03_10m.jp2"), ext3)
+ca <- stack(ca10r,ca10b,ca10v)
+ggRGB(ca, r=1,g=3,b=2)
+
+ca03r <- crop(raster("C:/Users/utente/Documents/T10SFH_20200305T185241_B04_10m.jp2"), ext3)
+ca03b <- crop(raster("C:/Users/utente/Documents/T10SFH_20200305T185241_B02_10m.jp2"), ext3)
+ca03v <- crop(raster("C:/Users/utente/Documents/T10SFH_20200305T185241_B03_10m.jp2"), ext3)
+c <- stack(ca03r,ca03b,ca03v)
+ggRGB(c, r=1,g=3,b=2)
