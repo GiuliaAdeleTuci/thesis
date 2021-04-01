@@ -1,0 +1,86 @@
+require(RStoolbox)
+cali03 <- raster("califir03.tif")
+plot(cali03)
+library(ggplot2)
+MapTheme <- list(theme(
+  axis.text = element_text(size = 6),  
+  axis.text.y = element_text(angle = 90, hjust = 0.5),
+  axis.title = element_blank()
+))  
+set.seed(42)
+lsat_uc <- unsuperClass(cali03, nClasses = 6, output = "classes")
+lsat_uc
+ggR(lsat_uc$map, forceCat = TRUE, geom_raster = TRUE) +
+  scale_fill_viridis_d(name = "Cluster", option = "A") + MapTheme
+
+lsat_uc <- unsuperClass(cali03, nClasses = 8, output = "classes")
+ggR(lsat_uc$map, forceCat = TRUE, geom_raster = TRUE) +
+  scale_fill_viridis_d(name = "Cluster", option = "A") + MapTheme
+
+lsat_uc <- unsuperClass(cali10, nClasses = 8, output = "classes")
+ggR(lsat_uc$map, forceCat = TRUE, geom_raster = TRUE) +
+  scale_fill_viridis_d(name = "Cluster", option = "A") + MapTheme
+
+install.packages("viridis")
+library(viridis)
+# distances
+set.seed(42)
+lsat_ucd <- unsuperClass(cali03, nClasses = 6, output = "distances")
+lsat_ucd
+ggR(lsat_ucd$map, layer = 1:6, geom_raster = TRUE) +
+  scale_fill_viridis(option="magma", name = "Distance", direction = -1) + MapTheme
+ggR(lsat_ucd$map, layer = 1:6, geom_raster = TRUE) +
+  scale_fill_viridis(option="inferno", name = "Distance", direction = -1) + MapTheme
+
+# 8 classi+
+lsat_ucd <- unsuperClass(cali03, nClasses = 8, output = "distances")
+ggR(lsat_ucd$map, layer = 1:8, geom_raster = TRUE) +
+  scale_fill_viridis(option="magma", name = "Distance", direction = -1) + MapTheme
+
+# confronto con post
+cali10 <- raster("califir10.tif")
+lsat_ucd <- unsuperClass(cali10, nClasses = 6, output = "distances")
+lsat_ucd
+ggR(lsat_ucd$map, layer = 1:6, geom_raster = TRUE) +
+  scale_fill_viridis(option="magma", name = "Distance", direction = -1) + MapTheme
+
+lsat_ucd <- unsuperClass(cali10, nClasses = 8, output = "distances")
+ggR(lsat_ucd$map, layer = 1:8, geom_raster = TRUE) +
+  scale_fill_viridis(option="magma", name = "Distance", direction = -1) + MapTheme
+
+
+
+## sam
+lsat_ucd
+classCentroids <- lsat_ucd$model$centers
+
+lsat_sa <- sam(cali03, em = classCentroids, angles = TRUE)
+
+ggR(lsat_sa, 1:8, geom_raster = TRUE) +
+  scale_fill_viridis(option="magma",name = "Spectral angle", direction = -1) + MapTheme
+
+
+
+## 03
+set.seed(42)
+lsat_uc <- unsuperClass(cali03, nClasses = 8, output = "classes")
+lsat_uc
+
+ggR(lsat_uc$map, forceCat = TRUE, geom_raster = TRUE) +
+  scale_fill_viridis_d(name = "Cluster", option = "A") + MapTheme
+
+# dist
+set.seed(42)
+lsat_ucd <- unsuperClass(cali03, nClasses = 8, output = "distances")
+lsat_ucd
+ggR(lsat_ucd$map, layer = 1:8, geom_raster = TRUE) +
+  scale_fill_viridis(option="magma",name = "Distance", direction = -1) + MapTheme
+
+#sam
+classCentroids <- lsat_ucd$model$centers
+classCentroids
+lsat_sa <- sam(lsat, em = classCentroids, angles = TRUE)
+### Error in sam(lsat, em = classCentroids, angles = TRUE) : The number of columns in em must match the number of bands in x.
+lsat_sa
+ggR(lsat_sa, 1:4, geom_raster = TRUE) +
+  scale_fill_viridis_c(name = "Spectral angle", direction = -1) + MapTheme
