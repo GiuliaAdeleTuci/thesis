@@ -86,6 +86,13 @@ green<-crop(raster("C:/Users/utente/Documents/T32TPS_20200905T101031_B03_10m.jp2
 try<-stack(red, blu,green)
 
 ggRGB(try, r = 1, g =3, b = 2)
+# to improve brightness
+ggRGBst <- raster::stretch(try,
+                           minq=.02,
+                          maxq=.98
+                          )
+raster::plotRGB(ggRGBst)
+
 
 v <- crop(raster("C:/Users/utente/Documents/T32TPS_20200905T101031_B02_20m.jp2"),shp_area_vaia)
 vv <- crop(raster("C:/Users/utente/Documents/T32TPS_20200905T101031_B03_20m.jp2"),shp_area_vaia)
@@ -138,12 +145,71 @@ require(RStoolbox)
 
 shp_area_aus<-shapefile("C:/Users/utente/Documents/A_shp.shp")
 
-# RGB true colors 
+
 red<-crop(raster("C:/Users/utente/Documents/T55HGU_20200320T000241_B04_10m.jp2"),shp_area_aus)
+
+
 blu<-crop(raster("C:/Users/utente/Documents/T55HGU_20200320T000241_B02_10m.jp2"),shp_area_aus)
 green<-crop(raster("C:/Users/utente/Documents/T55HGU_20200320T000241_B03_10m.jp2"),shp_area_aus)
 
 try<-stack(red, blu,green)
 
-ggRGB(try, r = 1, g =3, b = 2)  
+ggRGB(try, r = 1, g =3, b = 2)
+
+dev.off()
+ggRGBst <- raster::stretch(try,
+                           minq=.02,
+                           maxq=.98
+)
+raster::plotRGB(ggRGBst)
+
+
+r1 <- crop(raster("C:/Users/utente/Documents/T55HGU_20200320T000241_B02_20m.jp2"),shp_area_aus)
+r2 <- crop(raster("C:/Users/utente/Documents/T55HGU_20200320T000241_B03_20m.jp2"),shp_area_aus)
+r3 <- crop(raster("C:/Users/utente/Documents/T55HGU_20200320T000241_B04_20m.jp2"),shp_area_aus)
+r4 <- crop(raster("C:/Users/utente/Documents/T55HGU_20200320T000241_B05_20m.jp2"),shp_area_aus)
+r5 <- crop(raster("C:/Users/utente/Documents/T55HGU_20200320T000241_B06_20m.jp2"),shp_area_aus)
+r6 <- crop(raster("C:/Users/utente/Documents/T55HGU_20200320T000241_B07_20m.jp2"),shp_area_aus)
+r7 <- crop(raster("C:/Users/utente/Documents/T55HGU_20200320T000241_B8A_20m.jp2"),shp_area_aus)
+
+
+aus20 <- stack(r1,r2,r3,r4,r5,r6,r7)
+
+
+library(RStoolbox)
+library(ggplot2)
+MapTheme <- list(theme(
+  axis.text = element_text(size = 6),  
+  axis.text.y = element_text(angle = 90, hjust = 0.5),
+  axis.title = element_blank()
+))  
+
+set.seed(42)
+lsat_uc <- unsuperClass(aus20,nClasses =4,output="classes")
+lsat_uc
+ggR(lsat_uc$map, forceCat = TRUE, geom_raster = TRUE) +
+  scale_fill_viridis_d(name = "Cluster", option = "A") + MapTheme
+
+## distances
+set.seed(42)
+lsat_ucd <- unsuperClass(aus20,nclasses=4, output = "distances")
+lsat_ucd
+ggR(lsat_ucd$map, layer = 1:4, geom_raster = TRUE) +
+  scale_fill_viridis(option="magma", name = "Distance", direction = -1) + MapTheme
+
+
+##sam
+classCentroids <- lsat_ucd$model$centers
+
+lsat_sa <- sam(aus20,em = classCentroids, angles = TRUE)
+lsat_sa
+ggR(lsat_sa, 1:4, geom_raster = TRUE) +
+  scale_fill_viridis(option="magma",name = "Spectral angle", direction = -1) + MapTheme
+
+##UMX
+lsat_umx <- mesma(aus20, em = classCentroids)
+lsat_umx
+ggR(lsat_umx, 1:4, geom_raster = TRUE) +
+  scale_fill_viridis(option="magma",name = "Probability") + MapTheme
+
 
