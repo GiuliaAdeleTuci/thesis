@@ -119,7 +119,7 @@ ggR(lsat_uc$map, forceCat = TRUE, geom_raster = TRUE) +
 
 ## distances
 set.seed(42)
-lsat_ucd <- unsuperClass(vaia20,nclasses=5, output = "distances")
+lsat_ucd <- unsuperClass(vaia20,nClasses=5, output = "distances")
 lsat_ucd
 ggR(lsat_ucd$map, layer = 1:5, geom_raster = TRUE) +
   scale_fill_viridis(option="magma", name = "Distance", direction = -1) + MapTheme
@@ -192,7 +192,7 @@ ggR(lsat_uc$map, forceCat = TRUE, geom_raster = TRUE) +
 
 ## distances
 set.seed(42)
-lsat_ucd <- unsuperClass(aus20,nclasses=4, output = "distances")
+lsat_ucd <- unsuperClass(aus20,nClasses=4, output = "distances")
 lsat_ucd
 ggR(lsat_ucd$map, layer = 1:4, geom_raster = TRUE) +
   scale_fill_viridis(option="magma", name = "Distance", direction = -1) + MapTheme
