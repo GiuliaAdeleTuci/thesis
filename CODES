@@ -1,22 +1,22 @@
-## FOREST TYPES
+## VAIA 
 require(raster)
 require(RStoolbox)
 
 
-shp_area_for <-shapefile("C:/Users/utente/Documents/extent_polygon.shp")
-l <- crop(raster("C:/Users/utente/Documents/L2A_T32TPS_20171014T102021_B02_20m.jp2"),shp_area_for)
-l2 <- crop(raster("C:/Users/utente/Documents/L2A_T32TPS_20171014T102021_B03_20m.jp2"),shp_area_for)
-l3 <- crop(raster("C:/Users/utente/Documents/L2A_T32TPS_20171014T102021_B04_20m.jp2"),shp_area_for)
-l4 <- crop(raster("C:/Users/utente/Documents/L2A_T32TPS_20171014T102021_B05_20m.jp2"),shp_area_for)
-l5 <- crop(raster("C:/Users/utente/Documents/L2A_T32TPS_20171014T102021_B06_20m.jp2"),shp_area_for)
-l6 <- crop(raster("C:/Users/utente/Documents/L2A_T32TPS_20171014T102021_B07_20m.jp2"),shp_area_for)
-l7 <- crop(raster("C:/Users/utente/Documents/L2A_T32TPS_20171014T102021_B8A_20m.jp2"),shp_area_for)
-forest <- stack(l,l2,l3,l4,l5,l6,l7)
-forest
-writeRaster(forest,"forest_4.tif")
+shp_area_vaia <-shapefile("C:/Users/utente/Documents/area_vaia.shp")
+
+v <- crop(raster("C:/Users/utente/Documents/T32TPS_20200905T101031_B02_20m.jp2"),shp_area_vaia)
+vv <- crop(raster("C:/Users/utente/Documents/T32TPS_20200905T101031_B03_20m.jp2"),shp_area_vaia)
+vvv <- crop(raster("C:/Users/utente/Documents/T32TPS_20200905T101031_B04_20m.jp2"),shp_area_vaia)
+vvvv <- crop(raster("C:/Users/utente/Documents/T32TPS_20200905T101031_B05_20m.jp2"),shp_area_vaia)
+v5 <- crop(raster("C:/Users/utente/Documents/T32TPS_20200905T101031_B06_20m.jp2"),shp_area_vaia)
+v6 <- crop(raster("C:/Users/utente/Documents/T32TPS_20200905T101031_B07_20m.jp2"),shp_area_vaia)
+v7 <- crop(raster("C:/Users/utente/Documents/T32TPS_20200905T101031_B8A_20m.jp2"),shp_area_vaia)
+vaia20 <- stack(v,vv,vvv,vvvv,v5,v6,v7)
+ vaia20
+ writeRaster(vaia20,"vaia20.tif")
 library(RStoolbox)
 library(ggplot2)
-library(viridis)
 MapTheme <- list(theme(
   axis.text = element_text(size = 6),  
   axis.text.y = element_text(angle = 90, hjust = 0.5),
@@ -24,31 +24,36 @@ MapTheme <- list(theme(
 ))  
 
 set.seed(42)
-lsat_uc <- unsuperClass(forest,nClasses =4,output="classes")
+lsat_uc <- unsuperClass(vaia20,nClasses =3,output="classes")
 lsat_uc
+lsat_uc$model
 ggR(lsat_uc$map, forceCat = TRUE, geom_raster = TRUE) +
   scale_fill_viridis_d(name = "Cluster", option = "A") + MapTheme
 
 ## distances
 set.seed(42)
-lsat_ucd <- unsuperClass(forest,nClasses=3 output = "distances")
-lsat_ucd
+lsat_ucd <- unsuperClass(vaia20, nClasses=3, output = "distances")
+lsat_ucd$model
 ggR(lsat_ucd$map, layer = 1:3, stretch="lin", geom_raster = TRUE) +
   scale_fill_viridis(option="magma", name = "Distance", direction = -1) + MapTheme
+lsat_ucd$map[,1]
+lsat_ucd$model
+lsat_ucd$call
 
 ##sam
 classCentroids <- lsat_ucd$model$centers
 
-lsat_sa <- sam(forest,em = classCentroids, angles = TRUE)
+lsat_sa <- sam(vaia20,em = classCentroids, angles = TRUE)
 lsat_sa
 ggR(lsat_sa, 1:3, stretch="lin", geom_raster = TRUE) +
   scale_fill_viridis(option="magma",name = "Spectral angle", direction = -1) + MapTheme
 
 ##UMX
-lsat_umx <- mesma(forest, em = classCentroids)
+lsat_umx <- mesma(vaia20, em = classCentroids)
 lsat_umx
 ggR(lsat_umx, 1:3, stretch="lin", geom_raster = TRUE) +
   scale_fill_viridis(option="magma",name = "Probability") + MapTheme
+
 
 ## SUPERVISED
 ## SUPERVISED CLASSIFICATION EXERCISE 
